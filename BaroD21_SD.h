@@ -24,7 +24,7 @@ bool SD_init() {
    output = SD.open(filename, FILE_WRITE);
    if(!hasRun) {
      if(output) {
-        output.println("Time, Altitude");
+        output.println("Time, rawAltitude, altitudeAGL");
      }
      hasRun = true;
    }
@@ -34,12 +34,19 @@ bool SD_init() {
 
 void datalog() {
   output = SD.open(filename, FILE_WRITE);
+  char floatBuf[16];
   if(output && dataLogEnable) {
-    sprintf(buffer, "%d, %d");
-    output.println(buffer);
-    delay(10);
-  }
-  else {
+    Serial.println("Logging");
+    // dtostrf(getAltitudeAGL(), 6, 2, floatBuf); // Because sprintf doesn't support floats
+    // sprintf(buffer, "%d, %d, %f,", millis(), getRawAltitude(), floatBuf);
+    // output.println(buffer);
+    output.print(millis());
+    output.print(", ");
+    output.print(getRawAltitude());
+    output.print(", ");
+    output.print(getAltitudeAGL(), 2);  // 2 decimal places
+    output.println(", ");
     output.close();
+    delay(10);
   }
 }

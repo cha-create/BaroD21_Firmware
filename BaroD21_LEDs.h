@@ -27,12 +27,16 @@ void slowFillLeds(CRGB color) {
 
 void doubleFlashLeds(CRGB color) {
   fillLeds(color);
+  FastLED.show();
   delay(100);
   fillLeds(CRGB::Black);
+  FastLED.show();
   delay(75);
   fillLeds(color);
+  FastLED.show();
   delay(100);
   fillLeds(CRGB::Black);
+  FastLED.show();
   delay(150);
 }
 

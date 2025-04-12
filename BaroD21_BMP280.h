@@ -3,9 +3,12 @@
 #include <UniversalTimer.h>
 
 Adafruit_BMP280 bmp;
+UniversalTimer deviationDelay(2500, false);
 bool baroErrorBoi = false;
 extern int systemState;
-
+bool hasDeviation = false;
+float altitudeAGL;
+float deviation;
 bool baro_init() {
     Serial.print("Starting Barometer...");
     unsigned status;
@@ -27,9 +30,20 @@ bool baro_init() {
 
 float getAltitudeAGL() {
   while(systemState < 1) {
-    return 3.14159;
+    deviationDelay.start();
+    if(deviationDelay.check() && !hasDeviation) {
+      deviation = bmp.readAltitude(1013.55);
+      Serial.println("Deviation Logged");
+      hasDeviation = true;
+    }
+    altitudeAGL = deviation - deviation;
+    return altitudeAGL;
   }
-  return 3.14159;
+  if(systemState >= 1) {
+    altitudeAGL = bmp.readAltitude(1013.55) - deviation;
+    return altitudeAGL;
+  }
+  else {return 69;}
 }
 
 int getRawAltitude() {
